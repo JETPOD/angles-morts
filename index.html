@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#123d38">
+  <meta name="description" content="Serious game d'hygiène hospitalière : enquêtez sur 15 biais cognitifs qui favorisent la transmission des infections associées aux soins.">
+  <title>Angles morts | Les biais qui transmettent</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=zodiak@500,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="style.css">
+  <!-- Mesure d'audience Plausible, sans cookie ni identifiant persistant.
+       Chargée uniquement sur le site public GitHub Pages. -->
+  <script src="analytics.js"></script>
+  <script>
+    window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};
+    plausible.init=plausible.init||function(i){plausible.o=i||{}};
+    plausible.init({outboundLinks:false,fileDownloads:false,formSubmissions:false,transformRequest:window.amAnalytics.transformRequest});
+    if(location.hostname==="jetpod.github.io"&&location.pathname.startsWith("/angles-morts/")){
+      const s=document.createElement("script");s.async=true;s.src="https://plausible.io/js/pa-tStNr5ifi5Ciowo1JXWCY.js";document.head.appendChild(s);
+    }
+  </script>
+  <script src="data.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Aller au contenu</a>
+<header class="header">
+  <a class="brand" href="#" id="brand" aria-label="Angles morts, accueil">
+    <svg aria-hidden="true" viewBox="0 0 40 40" width="34" height="34" fill="none"><circle cx="17" cy="17" r="11" stroke="currentColor" stroke-width="2.6"/><path d="m25 25 10 10" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/><path d="M11 17a6 6 0 0 1 6-6" stroke="var(--amber)" stroke-width="2.6" stroke-linecap="round"/></svg>
+    <span><b>Angles morts</b><small>Les biais qui transmettent</small></span>
+  </a>
+  <nav class="topnav" aria-label="Navigation principale">
+    <button class="nav" data-view="home">Enquêtes</button>
+    <button class="nav" data-view="deck">Biaisothèque <b id="deck-count">0/15</b></button>
+    <button class="nav" data-view="sources">Sources</button>
+    <button class="quiet" id="theme" aria-label="Basculer le thème">Sombre</button>
+  </nav>
+</header>
+<main id="main" tabindex="-1"></main>
+<footer>
+  <p>Prototype pédagogique v0.1 · octobre 2026 · Cas fictifs. Relecture par l'équipe opérationnelle d'hygiène requise avant usage institutionnel.</p>
+  <p>Progression conservée uniquement tant que la page reste ouverte. Aucun compte, aucun stockage.</p>
+</footer>
+<dialog id="dialog" aria-labelledby="dialog-title"><div id="dialog-content"></div></dialog>
+</body>
+</html>
