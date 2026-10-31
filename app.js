@@ -33,10 +33,11 @@
     document.querySelectorAll(".topnav .nav").forEach((b) => b.classList.toggle("active", b.dataset.view === view));
     $("#deck-count").textContent = `${state.unlocked.size}/15`;
   }
-  function show(html, view) {
+  function show(html, view, keep) {
     main.innerHTML = html;
     setNav(view);
-    window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    if (keep) return;
+    window.scrollTo(0, 0);
     main.focus({ preventScroll: true });
   }
 
@@ -116,7 +117,7 @@
     renderScene();
   }
 
-  function renderScene() {
+  function renderScene(keep) {
     const c = state.cur, { m, idx, sc } = c;
     const steps = m.scenes.map((_, i) => `<i class="${i < idx || state.results[`${m.id}-${i}`] ? "on" : i === idx ? "cur" : ""}"></i>`).join("");
     const clues = sc.clues.map((cl, i) => `<div class="clue ${c.opened.has(i) ? "open" : ""}">
@@ -186,31 +187,37 @@
         <p class="story">${esc(sc.story)}</p>
         <div class="clues">${clues}</div>
         ${p1}${p2}${p3}
-      </article></div>`, "home");
+      </article></div>`, "home", keep);
   }
 
-  function scrollTo(id) { const el = document.getElementById(id); if (el) el.scrollIntoView({ behavior: "smooth", block: "start" }); }
+  function scrollTo(id) {
+    const el = document.getElementById(id); if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const h = el.querySelector("h3"); if (h) { h.tabIndex = -1; h.focus({ preventScroll: true }); }
+  }
+  function refocus(sel) { const el = main.querySelector(sel); if (el) el.focus({ preventScroll: true }); }
 
   function onClue(i) {
     const c = state.cur; if (c.opened.has(i)) return;
     c.opened.add(i);
-    const y = window.scrollY; renderScene(); window.scrollTo(0, y);
-    if (c.opened.size === 3) scrollTo("phase1");
+    renderScene(true);
+    if (c.opened.size === 3) scrollTo("phase1"); else refocus(`[data-clue="${i}"]`);
   }
   function onBias(k) {
     const c = state.cur; if (c.biasPts !== null || c.tries.includes(k)) return;
     c.tries.push(k);
     if (k === c.sc.answer) c.biasPts = c.tries.length === 1 ? 2 : 1;
     else if (c.tries.length >= 2) c.biasPts = 0;
-    const y = window.scrollY; renderScene(); window.scrollTo(0, y);
+    renderScene(true);
     if (c.biasPts !== null) setTimeout(() => scrollTo("phase2"), 50);
+    else { const f = main.querySelector("#phase1 .feedback"); if (f) { f.tabIndex = -1; f.focus({ preventScroll: true }); } }
   }
   function onParade(pi) {
     const c = state.cur; if (c.paradePts !== null) return;
     c.paradeIdx = pi; c.paradePts = c.sc.parades[pi].s;
     state.results[`${c.m.id}-${c.idx}`] = { bias: c.biasPts, parade: c.paradePts };
     state.unlocked.add(c.sc.answer);
-    const y = window.scrollY; renderScene(); window.scrollTo(0, y);
+    renderScene(true);
     setTimeout(() => scrollTo("phase2"), 50);
   }
   function onNext() {
@@ -250,7 +257,7 @@
           <ul><li>Ralentir aux moments à risque : avant un geste invasif, une prescription, une conclusion d'enquête.</li><li>Préférer les défenses du système (check-list, rôle nommé, question standardisée, retour de données) à la seule vigilance individuelle.</li><li>Rendre la parole facile et sans blâme : un signalement est une information, pas une accusation.</li></ul>
           <p class="hint">Le référentiel HAS de compétences en facteurs humains (2026) détaille ces compétences non techniques : <a href="${SOURCES.has_fh.url}" target="_blank" rel="noopener">${esc(SOURCES.has_fh.name)}</a>.</p>
         </article>
-        <div class="next"><button class="btn line" id="replay" data-mod="${m.id}">Rejouer ce module</button>${others.length ? `<button class="btn" data-mod="${others[0].id}">Module suivant : ${esc(others[0].title)}</button>` : `<button class="btn" data-view="deck">Voir la biaisothèque complète</button>`}</div>
+        <div class="next no-print"><button class="btn line" id="print">Imprimer le rapport</button><button class="btn line" id="replay" data-mod="${m.id}">Rejouer ce module</button>${others.length ? `<button class="btn" data-mod="${others[0].id}">Module suivant : ${esc(others[0].title)}</button>` : `<button class="btn" data-view="deck">Voir la biaisothèque complète</button>`}</div>
       </section>`, "home");
   }
 
@@ -286,6 +293,35 @@
       <p class="notice"><b>Mesure d'audience.</b> Sur le site public, une mesure agrégée sans cookie (Plausible) compte uniquement les démarrages et fins de modules. Aucun score, aucune réponse, aucun identifiant n'est transmis.</p>`, "sources");
   }
 
+
+  /* Guide d'animation */
+  function guide() {
+    state.cur = null;
+    const qs = {
+      1: ["Dans votre service, quel écart est devenu « normal » au point qu'on ne le voit plus ?", "Qu'est-ce qui vous aiderait à mettre votre tablier quand personne d'autre ne le fait ?", "Comment rendre visible, sans blâme, l'écart entre ce qu'on croit faire et ce qu'on fait ?"],
+      2: ["Quelle phrase pourriez-vous convenir en équipe pour proposer une friction à un senior ?", "Avant de conclure sur une fièvre, quelles portes d'entrée listez-vous systématiquement ?", "Dans quelles situations l'abstention thérapeutique est-elle difficile à tenir, et comment l'expliquer ?"],
+      3: ["Vos indicateurs d'hygiène des mains sont-ils croisés ? Avec quelles données ?", "Lors de vos derniers retours d'expérience, l'analyse portait-elle sur les personnes ou sur le système ?", "Quelle tâche de votre circuit de transfert n'est attribuée à personne nommément ?"]
+    };
+    const mods = MODULES.map((m) => `<article class="module"><div class="code">${m.code}</div><h3>${esc(m.title)}</h3><div class="meta">${esc(m.audience)}</div>
+      <p><b>Biais travaillés :</b> ${m.scenes.map((sc) => esc(BIASES[sc.answer].name)).join(", ")}.</p>
+      <div><div class="eyebrow">Questions de discussion</div><ol class="srcs">${qs[m.id].map((q) => `<li>${esc(q)}</li>`).join("")}</ol></div></article>`).join("");
+    show(`<div class="section-head" style="margin-top:0"><div><div class="eyebrow">Pour l'EOH, le CLIN et les référents</div><h2>Guide d'animation</h2><p class="hint">Le jeu peut se pratiquer seul, mais il prend tout son sens en groupe, projeté en salle ou lors d'un temps de formation dans le service.</p></div><button class="btn line no-print" id="print">Imprimer le guide</button></div>
+      <article class="file"><h3>Déroulé conseillé : séance de 30 à 45 minutes</h3>
+        <table class="table"><thead><tr><th>Temps</th><th>Étape</th><th>Repères pour l'animateur</th></tr></thead><tbody>
+          <tr><td class="n">5 min</td><td><b>Accroche</b></td><td>« Connaître la règle suffit-il à l'appliquer ? » Recueillir quelques exemples d'écarts observés, sans nommer personne.</td></tr>
+          <tr><td class="n">15 à 20 min</td><td><b>Un module projeté</b></td><td>Choisir le module du public présent. Faire voter la salle à main levée sur le biais, puis sur la parade, avant de cliquer. Laisser débattre quand les avis divergent : les biais voisins sont une bonne occasion d'échanger.</td></tr>
+          <tr><td class="n">10 min</td><td><b>Retour au terrain</b></td><td>Utiliser les questions de discussion ci-dessous. Faire choisir au groupe une seule parade à tester dans le service.</td></tr>
+          <tr><td class="n">5 min</td><td><b>Engagement</b></td><td>Noter l'action retenue, un responsable nommé et une date de point d'étape. Imprimer le rapport d'enquête si utile.</td></tr>
+        </tbody></table>
+      </article>
+      <div class="section-head"><div><div class="eyebrow">Par module</div><h2>Biais et questions de discussion</h2></div></div>
+      <div class="modules">${mods}</div>
+      <article class="file" style="margin-top:1.4rem"><h3>Règles du jeu pour l'animateur</h3>
+        <ul><li>Ne jamais transformer une scène en mise en cause d'une personne réelle du service. Les cas sont fictifs et doivent le rester.</li><li>Valoriser les mauvaises réponses : elles montrent que les biais touchent tout le monde, y compris les experts.</li><li>Ramener chaque discussion vers les défenses du système : organisation, outils, rôles nommés, retour de données.</li><li>Rappeler que les scores ne sont ni enregistrés ni transmis.</li></ul>
+        <p class="hint">Avant diffusion institutionnelle, faire relire les réponses attendues et le classement des parades par l'équipe opérationnelle d'hygiène, et les adapter aux protocoles locaux.</p>
+      </article>`, "guide");
+  }
+
   /* Délégation des événements */
   document.addEventListener("click", (e) => {
     const t = e.target.closest("button,a");
@@ -293,11 +329,12 @@
     if (t.id === "brand") { e.preventDefault(); return home(); }
     if (t.id === "replay") return replay(+t.dataset.mod);
     if (t.dataset.mod) return startModule(+t.dataset.mod);
-    if (t.dataset.view) { const v = t.dataset.view; return v === "deck" ? deck() : v === "sources" ? sources() : home(); }
+    if (t.dataset.view) { const v = t.dataset.view; return v === "deck" ? deck() : v === "sources" ? sources() : v === "guide" ? guide() : home(); }
     if (t.dataset.clue !== undefined) return onClue(+t.dataset.clue);
     if (t.dataset.bias) return onBias(t.dataset.bias);
     if (t.dataset.parade !== undefined) return onParade(+t.dataset.parade);
     if (t.id === "next") return onNext();
+    if (t.id === "print") return window.print();
   });
 
   home();
