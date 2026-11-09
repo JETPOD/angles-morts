@@ -100,7 +100,7 @@ const MODULES = [
           { t: "Laisser faire : si personne n'a eu d'infection, c'est que le risque est faible.", s: 0, fb: "C'est exactement le raisonnement qui nourrit la normalisation de la déviance : l'absence d'incident visible n'est pas une preuve de sécurité." }
         ],
         debrief: {
-          facts: "Banja décrit comment des écarts répétés sans conséquence immédiate deviennent des pratiques « normales », rationalisées et transmises aux nouveaux arrivants. Ne pas se laver les mains suffisamment ou ne pas changer de gants font partie des exemples d'infractions courantes qu'il cite.",
+          facts: "Banja décrit comment des écarts répétés sans conséquence immédiate deviennent des pratiques « normales », rationalisées et transmises aux nouveaux arrivants. Ne pas se laver les mains suffisamment ou ne pas changer de gants font partie des exemples d'écarts courants qu'il cite.",
           rule: "Les précautions standard 2017 posent des prérequis à l'hygiène des mains : avant-bras dégagés, ongles courts sans vernis, aucun bijou, y compris l'alliance.",
           take: "« On a toujours fait comme ça » ne prouve rien, à part la durée de l'écart.",
           src: ["banja", "sf2h_ps"]
