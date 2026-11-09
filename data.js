@@ -1,4 +1,4 @@
-/* Angles morts : contenu pédagogique.
+/* Les biais qui transmettent : contenu pédagogique.
    Scénarios fictifs. Chaque débriefing renvoie à des sources publiques vérifiables. */
 
 const SOURCES = {
@@ -50,7 +50,7 @@ const BIASES = {
 const MODULES = [
   {
     id: 1, code: "M1", title: "Au plus près du soin", audience: "IDE et aides-soignants", time: "10 min",
-    intro: "Une journée en médecine polyvalente. Cinq situations ordinaires, cinq angles morts. À vous de les repérer avant qu'ils ne transmettent.",
+    intro: "Une journée en médecine polyvalente. Cinq situations ordinaires, cinq biais à démasquer. À vous de les repérer avant qu'ils ne transmettent.",
     scenes: [
       {
         place: "Médecine polyvalente, chambre 12", hour: "07 h 40",

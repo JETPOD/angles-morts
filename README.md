@@ -1,4 +1,4 @@
-# Angles morts : les biais qui transmettent
+# Les biais qui transmettent
 
 Serious game d'hygiène hospitalière sur les biais cognitifs qui favorisent la transmission des infections associées aux soins.
 

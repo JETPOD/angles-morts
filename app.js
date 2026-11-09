@@ -1,4 +1,4 @@
-/* Angles morts : moteur du jeu. Progression en mémoire uniquement. */
+/* Les biais qui transmettent : moteur du jeu. Progression en mémoire uniquement. */
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const main = $("#main");
@@ -82,7 +82,7 @@
     show(`<section class="hero">
         <div>
           <div class="eyebrow">Serious game · Hygiène hospitalière</div>
-          <h1>Angles morts : les biais qui <em>transmettent</em></h1>
+          <h1>Les biais qui <em>transmettent</em></h1>
           <p>Les infections associées aux soins ne naissent pas seulement d'un manque de connaissances. Elles se glissent dans nos raccourcis de pensée. Menez 15 enquêtes, repérez le biais cognitif à l'œuvre, puis choisissez la parade qui protège vraiment.</p>
           <div class="hero-actions"><button class="btn amber" data-mod="${firstOpen()}">${totalDone() ? "Continuer l'enquête" : "Commencer l'enquête"}</button><button class="btn ghost" data-view="deck">Voir la biaisothèque</button></div>
         </div>${loupe}
