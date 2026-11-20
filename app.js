@@ -250,14 +250,14 @@
             <div><div class="eyebrow">${esc(m.audience)}</div><h2>${esc(m.title)} : dossier clos</h2></div>
             <div style="text-align:right"><div class="big">${s}<span style="font-size:1.4rem;color:var(--muted)">/20</span></div><span class="stamp">${verdict}</span></div>
           </div>
-          <p class="hint" style="margin-top:1rem">Le score sert à vous situer, il n'est ni enregistré ni transmis. Ce qui compte : reconnaître le mécanisme la prochaine fois qu'il se présente.</p>
+          <p class="hint" style="margin-top:1rem">Le score sert à vous situer, il n'est ni enregistré ni transmis. L'attestation n'indique que le palier atteint. Ce qui compte : reconnaître le mécanisme la prochaine fois qu'il se présente.</p>
           <table class="table" style="margin-top:1rem"><thead><tr><th>Enquête</th><th>Biais</th><th>Message clé</th><th>Score</th></tr></thead><tbody>${rows}</tbody></table>
         </article>
         <article class="file"><h3>Trois réflexes contre tous les biais</h3>
           <ul><li>Ralentir aux moments à risque : avant un geste invasif, une prescription, une conclusion d'enquête.</li><li>Préférer les défenses du système (check-list, rôle nommé, question standardisée, retour de données) à la seule vigilance individuelle.</li><li>Rendre la parole facile et sans blâme : un signalement est une information, pas une accusation.</li></ul>
           <p class="hint">Le référentiel HAS de compétences en facteurs humains (2026) détaille ces compétences non techniques : <a href="${SOURCES.has_fh.url}" target="_blank" rel="noopener">${esc(SOURCES.has_fh.name)}</a>.</p>
         </article>
-        <div class="next no-print"><button class="btn line" id="print">Imprimer le rapport</button><button class="btn line" id="replay" data-mod="${m.id}">Rejouer ce module</button>${others.length ? `<button class="btn" data-mod="${others[0].id}">Module suivant : ${esc(others[0].title)}</button>` : `<button class="btn" data-view="deck">Voir la biaisothèque complète</button>`}</div>
+        <div class="next no-print">${modCount(m) === m.scenes.length ? `<button class="btn" id="attest" data-att="${m.id}">Obtenir mon attestation</button>` : ""}<button class="btn line" id="print">Imprimer le rapport</button><button class="btn line" id="replay" data-mod="${m.id}">Rejouer ce module</button>${others.length ? `<button class="btn" data-mod="${others[0].id}">Module suivant : ${esc(others[0].title)}</button>` : `<button class="btn" data-view="deck">Voir la biaisothèque complète</button>`}</div>
       </section>`, "home");
   }
 
@@ -290,7 +290,7 @@
     const items = Object.values(SOURCES).map((s) => `<li><a href="${s.url}" target="_blank" rel="noopener">${esc(s.name)}</a></li>`).join("");
     show(`<div class="section-head" style="margin-top:0"><div><div class="eyebrow">Références</div><h2>Sources mobilisées</h2><p class="hint">Recommandations françaises et internationales, et publications sur les biais cognitifs en santé. Les chiffres cités dans les débriefings en sont issus ; les situations sont fictives.</p></div></div>
       <ul class="src-list">${items}</ul>
-      <p class="notice"><b>Mesure d'audience.</b> Sur le site public, une mesure agrégée sans cookie (Plausible) compte uniquement les démarrages et fins de modules. Aucun score, aucune réponse, aucun identifiant n'est transmis.</p>`, "sources");
+      <p class="notice"><b>Mesure d'audience.</b> Sur le site public, une mesure agrégée sans cookie (Plausible) compte uniquement les démarrages et fins de modules, et les attestations imprimées par palier. Aucun nom, aucun score, aucune réponse, aucun identifiant n'est transmis.</p>`, "sources");
   }
 
 
@@ -335,6 +335,7 @@
     if (t.dataset.parade !== undefined) return onParade(+t.dataset.parade);
     if (t.id === "next") return onNext();
     if (t.id === "print") return window.print();
+    if (t.id === "attest") { const m = MODULES.find((x) => x.id === +t.dataset.att); return window.SGAttestation && window.SGAttestation.open({ jeu: "Les biais qui transmettent", module: `module ${m.code} : ${m.title}`, code: "LBT", color: "#226b60", ratio: modScore(m) / (m.scenes.length * 4), critical: null }); }
   });
 
   home();
